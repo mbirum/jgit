@@ -1,0 +1,82 @@
+#!/bin/bash
+
+COMMAND=$1
+ARG=$2
+
+function status {
+    clear
+    git status
+}
+
+function commit {
+    git commit -m $ARG
+}
+
+function hide {
+    git update-index --assume-unchanged $ARG
+}
+
+function show {
+    git update-index --no-assume-unchanged $ARG
+}
+
+function set_current_branch {
+    for i in $(git currentbranch); do CURRENT_BRANCH=$i; done
+}
+
+function upstream {
+    set_current_branch
+    if [ "$ARG" == "self" ]; then
+        U_BRANCH=$CURRENT_BRANCH
+    else
+        U_BRANCH=$ARG
+    fi
+    git branch --set-upstream-to=origin/$U_BRANCH $CURRENT_BRANCH
+}
+
+function push {
+    set_current_branch
+    git push origin $CURRENT_BRANCH
+}
+
+function newbranch {
+    set_current_branch
+    git checkout -b $ARG
+    ARG=$CURRENT_BRANCH
+    upstream
+}
+
+function tokens {
+    start "" "C:/Users/birumm3/OneDrive - Nationwide/Documents/tokens/"
+}
+
+function edit {
+    C:/Windows/system32/notepad.exe "C:/Users/birumm3/devl/jgit/jgit"
+}
+
+function sync {
+    set CURRENT_DIR=$(pwd)
+    cd "C:/Users/birumm3/devl/jgit"
+    git add .
+    git commit -m "manual edit of jgit"
+    git pull
+    git push origin master
+    cd $CURRENT_DIR
+}
+
+function rungit {
+    git "$@"
+}
+
+if    [ "$COMMAND" == "" ]; then status
+elif  [ "$COMMAND" == "commit" ]; then commit
+elif  [ "$COMMAND" == "hide" ]; then hide
+elif  [ "$COMMAND" == "show" ]; then show
+elif  [ "$COMMAND" == "upstream" ]; then upstream
+elif  [ "$COMMAND" == "push" ]; then push
+elif  [ "$COMMAND" == "newbranch" ]; then newbranch
+elif  [ "$COMMAND" == "tokens" ]; then tokens
+elif  [ "$COMMAND" == "edit" ]; then edit
+elif  [ "$COMMAND" == "sync" ]; then sync
+else rungit "$@"
+fi
